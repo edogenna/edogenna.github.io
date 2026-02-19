@@ -18,40 +18,116 @@ body {
 .container {
     position: relative;
     text-align: center;
+    /* Centriamo tutto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Wrapper fondamentale per l'effetto masking */
+.text-wrapper {
+    position: relative;
+    display: inline-block;
+    /* Questo mix-blend-mode + sfondo bianco sul testo 
+       permette di usare il testo come maschera se lo sfondo sotto è nero.
+       Ma qui usiamo un approccio differente: background-clip sul testo stesso.
+    */
 }
 
 /* Stile del testo glitterato */
 .glitter-text {
-    font-size: 5rem; /* Dimensione grande per impatto */
+    font-size: 5rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: #fff; /* Fallback */
     
-    /* Effetto sfumatura animata per simulare il luccichio */
-    background: linear-gradient(
-        110deg, 
-        #333 10%, 
-        #888 18%, 
-        #fff 25%, 
-        #888 32%, 
-        #333 40%
-    );
-    background-size: 200% auto;
+    /* TRUCCO PER IL MASKING:
+       Rendiamo il testo trasparente ma con un background che permetta
+       di vedere cosa c'è "sotto" (le particelle) solo dove c'è il testo?
+       Purtroppo CSS non permette clip dei figli tramite il genitore testo facilmente.
+       
+       Approccio "Screen":
+       Sfondo pagina scuro.
+       Testo: Color TRASPARENTE. 
+       Background-clip: text.
+       
+       Ma se il testo è trasparente, non vediamo nulla.
+       Dobbiamo usare "mix-blend-mode: multiply" su un livello bianco sopra? No complesso.
+       
+       Approccio più semplice ed efficace: 
+       Il container .text-wrapper ha il background nero.
+       Mettiamo le stelle nel container.
+       SOPRA le stelle mettiamo il testo.
+       Il testo ha background nero e color: transparent? No.
+       
+       Approccio "Knockout text":
+       Mettiamo uno sfondo bianco solido che copre le stelle.
+       Usiamo il testo per "bucare" questo sfondo bianco usando 'mix-blend-mode: screen' (se sfondo nero)
+       o 'destination-out' nel canvas.
+       
+       CSS Semplice:
+       Usiamo 'background-clip: text' sull'elemento che contiene le stelle? No, non funziona sui figli.
+       
+       SOLUZIONE MIGLIORE (senza Canvas/SVG complessi):
+       Mettiamo le stelle SOTTO il testo.
+       Il testo ha un colore semi-trasparente? No.
+       
+       Proviamo l'approccio "Color Burn" inverso o semplicemente:
+       Mettiamo le stelline *sopra* (z-index alto).
+       Ma diamo al testo `overflow: hidden`? No, il testo non è un box rettangolare.
+       
+       OK, torniamo a ciò che è fattibile in CSS puro + JS semplice:
+       Non possiamo clippare *perfettamente* elementi HTML alla forma dei glifi del font.
+       
+       MA, possiamo fingere!
+       Mettiamo il testo col suo colore rosa.
+       Le stelline sono *dentro* il testo?
+       Possiamo usare `background-clip: text` su un DIV che ha le stelline come background-image?
+       Impossibile se le stelline sono DOM elements animati.
+       
+       ALTERNATIVA: 'mix-blend-mode: lighten' con testo nero su sfondo nero?
+       Se sfondo è nero:
+       Mettiamo il testo in #222 (grigio scuro).
+       Mettiamo le stelle bianche/rosa che si muovono SOPRA il testo.
+       Applichiamo `mix-blend-mode: lighten` alle stelle (o overlay).
+       Le stelle su sfondo nero (fuori dal testo) non si vedono se il background sotto è nero.
+       Le stelle sul testo (più chiaro) si vedono.
+    */
+    
+    color: #ffb7c5; /* Rosa pastello base */
+    position: relative;
+    z-index: 10; /* Testo SOTTO le stelle per il masking visivo */
+    
+    /* Gradiente statico o animato rosa + Pattern stelle */
+    background-image: 
+        radial-gradient(white 15%, transparent 16%), /* Stelline/Puntini 1 */
+        radial-gradient(white 15%, transparent 16%), /* Stelline/Puntini 2 */
+        linear-gradient(
+            110deg, 
+            #ffc0cb 10%, 
+            #ff69b4 25%, 
+            #fff0f5 35%, 
+            #ff69b4 45%, 
+            #ffc0cb 60%
+        );
+    background-size: 6px 6px, 10px 10px, 200% auto; /* Dimensione puntini e gradiente */
+    background-position: 0 0, 3px 3px, 0 0; /* Offset per densità */
+    
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     
-    /* Animazione del flusso di luce (shine) */
-    animation: shine 3s linear infinite, entry 1.5s ease-out forwards;
-    
-    position: relative;
-    z-index: 10;
+    animation: shine 4s linear infinite;
 }
+
 
 /* Animazione del gradiente (luccichio che scorre) */
 @keyframes shine {
-    to {
-        background-position: 200% center;
+    0% {
+        background-position: 0 0, 3px 3px, 0 center;
+    }
+    100% {
+        /* Muoviamo anche i pattern delle stelline per effetto neve/scorrimento */
+        background-position: -50px 20px, -20px 50px, 200% center;
     }
 }
 
@@ -69,24 +145,32 @@ body {
     }
 }
 
-/* Container particelle (assoluto rispetto alla pagina o al container) */
+/* Container particelle */
 #particles-container {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none; /* Lascia passare i click */
-    z-index: 5;
-    overflow: visible; /* Permetti alle scintille di uscire un po' */
+    pointer-events: none;
+    z-index: 20; /* SOPRA il testo */
+    
+    /* TRUCCO FONDAMENTALE "SOURCE-IN" / MASKING VISIVO */
+    /* Usiamo mix-blend-mode per far vedere le stelle SOLO dove c'è luce sotto (il testo) */
+    mix-blend-mode: overlay; 
+    /* Nota: su sfondo nero assoluto body, 'overlay' farà sparire le stelle fuori dal testo 
+       perché nero + colore in overlay = nero. 
+       Sul testo rosa (luminoso), le stelle si vedranno! */
 }
 
 /* Stile base per le singole particelle (scintille) */
 .sparkle {
     position: absolute;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.8);
+    background: #fff; /* Bianco puro per massimo contrasto in overlay */
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    /* Togliamo l'ombra esterna perché in blend mode potrebbe dare aloni strani sul nero */
+    /* box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.9); */
+    
     opacity: 0;
     pointer-events: none;
     animation: sparkle-anim 2s ease-in-out forwards;

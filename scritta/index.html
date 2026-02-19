@@ -11,11 +11,14 @@
 <body>
 
     <div class="container">
-        <!-- Il testo con effetto glitter -->
-        <h1 class="glitter-text">Giulia Vaccona</h1>
-        
-        <!-- Container per le particelle generate via JS -->
-        <div id="particles-container"></div>
+        <!-- Il wrapper che farà da "maschera" per le stelline -->
+        <div class="text-wrapper">
+            <!-- Container per le particelle -->
+            <div id="particles-container"></div>
+            
+            <!-- Il testo vero e proprio che farà il clip -->
+            <h1 class="glitter-text" data-text="Patatina">Patatina</h1>
+        </div>
     </div>
 
     <script src="script.js"></script>
