@@ -20,4 +20,5 @@ To update the downloadable PDF, replace [`public/cv_Edoardo_Gennaretti.pdf`](pub
 ## Deploy
 
 Every push to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which builds the site and publishes it to GitHub Pages.
-The repository's Pages source must be set to **GitHub Actions** (Settings → Pages). `public/CNAME` keeps the custom domain.
+In the repository's Settings → Pages, the source must be **GitHub Actions** and the custom domain `edogenna.me`, with Enforce HTTPS on.
+With Actions deploys the custom domain comes only from that setting: GitHub ignores `public/CNAME`, so if the domain ever disappears, re-enter it there.
