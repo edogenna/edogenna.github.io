@@ -7,12 +7,13 @@ interface Props {
 }
 
 const { title, description, tags, href } = Astro.props.project;
+const external = href?.startsWith('http');
 ---
 
 <article class="card">
   <h3 class="card-title">
     {href ? (
-      <a href={href} target="_blank" rel="noopener">
+      <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>
         {title}
         <Icon name="arrow" />
       </a>

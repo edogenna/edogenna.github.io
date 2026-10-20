@@ -390,6 +390,12 @@ a:hover {
   color: var(--accent);
 }
 
+.section-intro {
+  max-width: 62ch;
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+}
+
 .entry + .entry {
   margin-top: 2rem;
 }

@@ -155,6 +155,27 @@ export const projects: Project[] = [
   },
 ];
 
+export const aiTools = {
+  intro:
+    'Small apps I use every day, built with LLMs and AI coding agents. I come up with the idea and the requirements, then work with the agents to design, write, test and ship the code. Both are installable web apps that work offline and keep all data on the device — no accounts, no backend.',
+  apps: [
+    {
+      title: 'Daily Facts',
+      href: '/daily-facts/',
+      tags: ['PWA', 'JavaScript', 'Barcode scanning', 'Open Food Facts'],
+      description:
+        'A food diary that installs on the iPhone home screen. Scan a barcode or search Open Food Facts to log calories and macros, save custom foods and recipes, and track daily goals, with backup export and restore.',
+    },
+    {
+      title: 'Gym Log',
+      href: '/gym-planner/',
+      tags: ['PWA', 'JavaScript', 'Offline'],
+      description:
+        'A workout logger: build a program split into days, log sets, reps and weight with a rest timer that beeps or vibrates, track cardio distance and pace, and import or export the history as CSV.',
+    },
+  ] satisfies Project[],
+};
+
 export const education: Entry[] = [
   {
     org: 'University of Illinois at Chicago (UIC)',
