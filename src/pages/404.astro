@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/cv';
+---
+
+<Base title={`Not found · ${profile.name}`} description="This page does not exist.">
+  <Header />
+  <main id="main" class="container not-found">
+    <h1 class="visually-hidden">Page not found</h1>
+    <pre class="terminal mono" aria-hidden="true"><span class="prompt-sign">~ $</span> cd <span id="missing-path">this-page</span>
+bash: cd: no such file or directory<span class="cursor"></span></pre>
+    <p>This page doesn’t exist. It may have moved when the site was rebuilt.</p>
+    <p><a class="button primary" href="/">cd ~</a></p>
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  const target = document.getElementById('missing-path');
+  if (target) {
+    try {
+      target.textContent = decodeURIComponent(window.location.pathname);
+    } catch {
+      target.textContent = window.location.pathname;
+    }
+  }
+</script>

@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Section from '../components/Section.astro';
+import Entry from '../components/Entry.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Footer from '../components/Footer.astro';
+import { education, experience, profile, projects, research, skills } from '../data/cv';
+
+const sections = ['research', 'experience', 'projects', 'education', 'skills'];
+---
+
+<Base title={profile.name} description={profile.description}>
+  <Header sections={sections} />
+  <main id="main" class="container">
+    <Hero />
+
+    <Section id="research">
+      {research.map((entry) => <Entry entry={entry} />)}
+    </Section>
+
+    <Section id="experience">
+      {experience.map((entry) => <Entry entry={entry} />)}
+    </Section>
+
+    <Section id="projects">
+      <div class="card-grid">
+        {projects.map((project) => <ProjectCard project={project} />)}
+      </div>
+    </Section>
+
+    <Section id="education">
+      {education.map((entry) => <Entry entry={entry} />)}
+    </Section>
+
+    <Section id="skills">
+      <dl class="skills">
+        {skills.map((group) => (
+          <div class="skill-row">
+            <dt class="mono">{group.label}</dt>
+            <dd>{group.items.join(' · ')}</dd>
+          </div>
+        ))}
+      </dl>
+    </Section>
+  </main>
+  <Footer />
+</Base>

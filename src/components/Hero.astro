@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+import { links, profile } from '../data/cv';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <p class="prompt mono" aria-hidden="true">~ $ whoami<span class="cursor"></span></p>
+  <h1 id="hero-title">{profile.name}</h1>
+  <p class="tagline mono">{profile.tagline}</p>
+  <p class="location">{profile.location}</p>
+  <div class="bio">
+    {profile.bio.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+  <ul class="link-row">
+    {links.map((link) => {
+      const external = link.href.startsWith('http');
+      return (
+        <li>
+          <a
+            class:list={['button', { primary: link.icon === 'file' }]}
+            href={link.href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener' : undefined}
+          >
+            <Icon name={link.icon} />
+            {link.label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</section>

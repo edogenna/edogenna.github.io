@@ -1,0 +1,38 @@
+---
+import Icon from './Icon.astro';
+import type { Entry } from '../data/cv';
+
+interface Props {
+  entry: Entry;
+}
+
+const { org, role, period, location, href, tags, bullets } = Astro.props.entry;
+---
+
+<article class="entry">
+  <div class="entry-head">
+    <h3 class="entry-org">
+      {href ? (
+        <a href={href} target="_blank" rel="noopener">
+          {org}
+          <Icon name="arrow" />
+        </a>
+      ) : (
+        org
+      )}
+    </h3>
+    <p class="entry-period mono">{period}</p>
+  </div>
+  <p class="entry-role">
+    {role}
+    {location && <span class="entry-location"> · {location}</span>}
+  </p>
+  {tags && (
+    <ul class="tags" aria-label="Technologies">
+      {tags.map((tag) => <li>{tag}</li>)}
+    </ul>
+  )}
+  <ul class="entry-bullets">
+    {bullets.map((bullet) => <li>{bullet}</li>)}
+  </ul>
+</article>

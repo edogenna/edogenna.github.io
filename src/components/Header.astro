@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  sections?: string[];
+}
+
+const { sections = [] } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/" aria-label="Home">~/edogenna</a>
+    {sections.length > 0 && (
+      <nav aria-label="Sections">
+        <ul>
+          {sections.map((id) => (
+            <li><a href={`#${id}`}>{id}</a></li>
+          ))}
+        </ul>
+      </nav>
+    )}
+    <button class="theme-toggle" type="button" aria-label="Toggle color theme">
+      <span class="when-light"><Icon name="moon" /></span>
+      <span class="when-dark"><Icon name="sun" /></span>
+    </button>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const current = () => root.dataset.theme ?? (media.matches ? 'dark' : 'light');
+
+  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+    const next = current() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
+  });
+</script>
